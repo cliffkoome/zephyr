@@ -82,24 +82,24 @@ Fill in every field. No field should remain at its placeholder value.
 
 ### Field Reference
 
-| Field | Required | Description |
-|---|---|---|
-| `team_id` | ✅ | Your unique team ID as registered on the ADTF portal |
-| `domain` | ✅ | Your challenge track. One of: `math_scientific_reasoning`, `healthcare_medical`, `agriculture`, `creative_writing`, `coding_assistants`, `corporate_enterprise`, `autonomous_ai_agents` |
-| `language_scope` | ✅ | Array of BCP-47 language codes. Must include at least one. |
-| `african_alpha_claim` | ✅ | `true` only if claiming the African Use Case Bonus |
-| `budget_laptop_claim` | ✅ | Must be `true` — all submissions target the 8 GB RAM laptop profile |
-| `submitter.name` | ✅ | Full name of the team member submitting the run |
-| `submitter.email` | ✅ | Valid email address linked to the registered team |
-| `submitter.github_handle` | ✅ | Verifiable GitHub username |
-| `cross_disciplinary_pairing.discipline` | ✅ | The deep-tech discipline your model serves |
-| `cross_disciplinary_pairing.load_bearing` | ✅ | `true` if the pairing is integral to the submission, not cosmetic |
-| `test_prompts` | ✅ | **Exactly 2 prompts** in your chosen domain. Organizers will add 2 hidden prompts to test for overfitting. |
-| `model.runtime` | ✅ | Must be `llama.cpp`. No other runtime is accepted. |
-| `model.quantization` | ✅ | Must be a GGUF quantization format (e.g. `GGUF Q4_K_M`, `GGUF Q5_K_M`) |
-| `model.parameters_estimate` | ✅ | Approximate parameter count (e.g. `135M`, `1.1B`, `7B`) |
-| `model.packaging` | ✅ | How the model is packaged. One of: `docker_image`, `docker_build_from_repo`, `binary_bundle` |
-| `_runtime.model_path` | ✅ | Relative path from repo root to your `.gguf` file (e.g. `model/my-model.gguf`) |
+| Field                                     | Required | Description                                                                                                                                                                             |
+| ----------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `team_id`                                 | ✅       | Your unique team ID as registered on the ADTF portal                                                                                                                                    |
+| `domain`                                  | ✅       | Your challenge track. One of: `math_scientific_reasoning`, `healthcare_medical`, `agriculture`, `creative_writing`, `coding_assistants`, `corporate_enterprise`, `autonomous_ai_agents` |
+| `language_scope`                          | ✅       | Array of BCP-47 language codes. Must include at least one.                                                                                                                              |
+| `african_alpha_claim`                     | ✅       | `true` only if claiming the African Use Case Bonus                                                                                                                                      |
+| `budget_laptop_claim`                     | ✅       | Must be `true` — all submissions target the 8 GB RAM laptop profile                                                                                                                     |
+| `submitter.name`                          | ✅       | Full name of the team member submitting the run                                                                                                                                         |
+| `submitter.email`                         | ✅       | Valid email address linked to the registered team                                                                                                                                       |
+| `submitter.github_handle`                 | ✅       | Verifiable GitHub username                                                                                                                                                              |
+| `cross_disciplinary_pairing.discipline`   | ✅       | The deep-tech discipline your model serves                                                                                                                                              |
+| `cross_disciplinary_pairing.load_bearing` | ✅       | `true` if the pairing is integral to the submission, not cosmetic                                                                                                                       |
+| `test_prompts`                            | ✅       | **Exactly 2 prompts** in your chosen domain. Organizers will add 2 hidden prompts to test for overfitting.                                                                              |
+| `model.runtime`                           | ✅       | Must be `llama.cpp`. No other runtime is accepted.                                                                                                                                      |
+| `model.quantization`                      | ✅       | Must be a GGUF quantization format (e.g. `GGUF Q4_K_M`, `GGUF Q5_K_M`)                                                                                                                  |
+| `model.parameters_estimate`               | ✅       | Approximate parameter count (e.g. `135M`, `1.1B`, `7B`)                                                                                                                                 |
+| `model.packaging`                         | ✅       | How the model is packaged. One of: `docker_image`, `docker_build_from_repo`, `binary_bundle`                                                                                            |
+| `_runtime.model_path`                     | ✅       | Relative path from repo root to your `.gguf` file (e.g. `model/my-model.gguf`)                                                                                                          |
 
 ---
 
@@ -108,11 +108,13 @@ Fill in every field. No field should remain at its placeholder value.
 This script **must** download your model weight file to the `model/` directory.
 
 Rules:
+
 - Must be idempotent — safe to run multiple times without re-downloading.
 - Must work without any credentials — your weights must be publicly accessible.
 - The downloaded file path must exactly match `_runtime.model_path` in `metadata.json`.
 
 Recommended hosting options for your weights:
+
 - [Hugging Face](https://huggingface.co) — public model repos (free, best for GGUF files)
 - GitHub Release Assets — attach the `.gguf` file to a GitHub Release
 - Any stable public URL (GCS public bucket, S3 public object, etc.)
@@ -187,4 +189,3 @@ View the full eligibility rules at [adtc-2026.devpost.com/rules](https://adtc-20
 ## 📄 License
 
 This template is licensed under the terms of the [GNU GPL v3 License](LICENSE).
-

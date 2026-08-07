@@ -14,3 +14,13 @@ __pycache__/
 # Local profiler output
 submission.json
 audit.json
+
+# Ignore model weights
+model/
+*.gguf
+
+# Ignore vector database and environment
+chroma_db/
+venv/
+adtc-venv/
+__pycache__/
