@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import chromadb
+from chromadb.config import Settings
 from chromadb.utils import embedding_functions
 import requests
 import traceback
@@ -8,8 +10,23 @@ from sandbox import execute_code
 
 app = FastAPI(title="Offline Coding Tutor API")
 
-# Initialize ChromaDB connection
-chroma_client = chromadb.PersistentClient(path="./chroma_db")
+# 1. ADD CORS MIDDLEWARE
+# This allows the Tauri desktop frontend to communicate with the FastAPI server
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins (including Tauri's custom localhost)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods (GET, POST, OPTIONS, etc.)
+    allow_headers=["*"],
+)
+
+# 2. DISABLE CHROMADB TELEMETRY
+# This stops the "ClientStartEvent" warnings in your terminal
+chroma_client = chromadb.PersistentClient(
+    path="./chroma_db",
+    settings=Settings(anonymized_telemetry=False)
+)
+
 sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
 collection = chroma_client.get_collection(name="think_python", embedding_function=sentence_transformer_ef)
 
@@ -33,14 +50,14 @@ def chat_endpoint(request: ChatRequest):
         retrieved_text = ""
         sources = []
 
-    # 2. Sandbox Execution (if code is provided)
+    # 2. Sandbox Execution
     sandbox_result = ""
     if request.code_snippet:
         print("Executing provided code snippet in sandbox...")
         execution = execute_code(request.code_snippet)
         sandbox_result = f"\n\n[System Sandbox Execution Output]:\n{execution['output']}"
 
-    # 3. Construct System Prompt
+    # 3. Construct System Prompt (FR6 & Swahili support)
     system_instruction = (
         "You are an offline coding tutor for CS students. Your goal is to teach, explain errors, and guide the student. "
         "CRITICAL RULE: You must NEVER write complete solutions for graded assignments. Refuse direct requests to just solve the problem. "
@@ -56,7 +73,7 @@ def chat_endpoint(request: ChatRequest):
         f"Student Query: {request.prompt}"
     )
 
-    # 4. Call Local Llama.cpp Server with extended timeout
+    # 4. Call Local llama.cpp REST Server
     try:
         response = requests.post(
             "http://127.0.0.1:8080/v1/chat/completions",
@@ -68,7 +85,7 @@ def chat_endpoint(request: ChatRequest):
                 "temperature": 0.3,
                 "max_tokens": 384
             },
-            timeout=120  # Extended from 30 to 120 seconds
+            timeout=120
         )
         response.raise_for_status()
         llm_output = response.json()['choices'][0]['message']['content']

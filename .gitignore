@@ -24,3 +24,5 @@ chroma_db/
 venv/
 adtc-venv/
 __pycache__/
+
+host-venv/
