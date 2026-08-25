@@ -6,7 +6,7 @@ Zephyr is a 100% offline, pedagogical AI coding assistant built for Computer Sci
 
 ---
 
-## 🌟 Key Capabilities
+## Key Capabilities
 
 - **Pedagogical Refusal Design (FR6):** Engineered strictly as a tutor. Zephyr guides students through concepts, identifies logical bugs, and explains terminal output, but refuses direct requests to solve graded assignments.
 - **Textbook-Grounded RAG (FR5):** Grounded in _Think Python, 2nd Edition_ by Allen Downey (CC-BY-NC 3.0) via a lightweight local ChromaDB vector index (`all-MiniLM-L6-v2`).
@@ -15,7 +15,7 @@ Zephyr is a 100% offline, pedagogical AI coding assistant built for Computer Sci
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```text
 offline-coding-tutor/
@@ -35,54 +35,83 @@ offline-coding-tutor/
 
 ---
 
-## 🚀 Quickstart & Reproduction
+## Quickstart & Reproduction
 
-### 1. Prerequisites & Environment Setup
+### 1. System Dependencies & Repository Setup
 
-Ensure you are running Python 3.11 on Ubuntu 22.04 LTS:
+On a fresh Ubuntu 22.04 LTS environment, install the required system build tools, clone the repository, and set up the Python virtual environment:
 
 ```bash
+# Install system packages
+sudo apt update && sudo apt install -y git cmake build-essential python3.11 python3.11-venv wget
+
+# Clone repository and enter project directory
+git clone [https://github.com/](https://github.com/)<your-username>/offline-coding-tutor.git
+cd offline-coding-tutor
+
+# Create and activate Python virtual environment
 python3.11 -m venv ~/adtc-venv
 source ~/adtc-venv/bin/activate
+
+# Install project dependencies
 pip install -r requirements.txt
 
 ```
 
-### 2. Download Model Weights
+### 2. Build the Inference Engine (`llama.cpp`)
 
-Download the quantized GGUF weights (`~2.4 GB`) locally:
+Compile `llama.cpp` natively for CPU inference. This must be done in the home directory:
 
 ```bash
+cd ~
+git clone [https://github.com/ggerganov/llama.cpp.git](https://github.com/ggerganov/llama.cpp.git)
+cd llama.cpp
+cmake -B build
+cmake --build build --config Release -j$(nproc)
+
+```
+
+### 3. Download Model Weights
+
+Download the quantized Qwen2.5-Coder GGUF model weights (~2.4 GB) directly into the project directory:
+
+```bash
+cd ~/offline-coding-tutor
 chmod +x download_model.sh
 ./download_model.sh
 
 ```
 
-### 3. Initialize Vector Database (RAG)
+### 4. Ingest Textbook into Vector Database (RAG)
 
-Build the local ChromaDB index from the _Think Python_ textbook:
+Build the local ChromaDB vector store from the provided educational material:
 
 ```bash
+cd ~/offline-coding-tutor
+source ~/adtc-venv/bin/activate
 python rag_ingest.py
 
 ```
 
 ---
 
-## 🛠️ Running the Application Stack
+## Running the Application Stack
 
-To run the interactive application, start the three components across separate terminal tabs (with `adtc-venv` active):
+To run the interactive application, start the three components across separate terminal tabs. Ensure you navigate to the project directory and activate the virtual environment where applicable.
 
-**Tab 1: Start `llama.cpp` Inference Engine**
+**Tab 1: Start `llama-server` Inference Engine**
 
 ```bash
+cd ~/offline-coding-tutor
 ~/llama.cpp/build/bin/llama-server -m model/qwen2.5-coder-3b-instruct-q4_k_m.gguf --port 8080 -c 4096
 
 ```
 
-**Tab 2: Start FastAPI Backend Router**
+**Tab 2: Start FastAPI Orchestration Backend**
 
 ```bash
+cd ~/offline-coding-tutor
+source ~/adtc-venv/bin/activate
 uvicorn backend:app --port 8000
 
 ```
@@ -90,15 +119,17 @@ uvicorn backend:app --port 8000
 **Tab 3: Launch Streamlit Frontend**
 
 ```bash
+cd ~/offline-coding-tutor
+source ~/adtc-venv/bin/activate
 streamlit run app.py
 
 ```
 
-Access the interface at `http://localhost:8501`.
+Access the tutor interface in your browser at `http://localhost:8501`.
 
 ---
 
-## 📊 Benchmark Execution
+## Benchmark Execution
 
 To evaluate Zephyr using the official ADTC profiler harness:
 

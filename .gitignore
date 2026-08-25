@@ -26,3 +26,4 @@ adtc-venv/
 __pycache__/
 
 host-venv/
+*repomix*
