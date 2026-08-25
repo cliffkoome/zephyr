@@ -58,14 +58,22 @@ def chat_endpoint(request: ChatRequest):
         sandbox_result = f"\n\n[System Sandbox Execution Output]:\n{execution['output']}"
 
     # 3. Construct System Prompt (FR6 & Swahili support)
-    system_instruction = (
-        "You are an offline coding tutor for CS students. Your goal is to teach, explain errors, and guide the student. "
-        "CRITICAL RULE: You must NEVER write complete solutions for graded assignments. Refuse direct requests to just solve the problem. "
-        "Use the provided textbook reference to ground your explanation."
-    )
-    
+    # 3. Construct System Prompt (FR6 & Swahili support)
     if request.language == "sw":
-        system_instruction += " You must provide your final technical explanation strictly in Swahili. Ensure programming terminology remains accurate."
+        # Aggressive Swahili anchoring to prevent attention drift to English
+        system_instruction = (
+            "Wewe ni mwalimu wa kompyuta. LAZIMA uandike maelezo yako yote kwa lugha ya Kiswahili. "
+            "(You MUST write all explanatory sentences in Swahili). "
+            "Maneno ya kiufundi pekee (kama 'array', 'list', 'append') ndiyo yanaruhusiwa kuwa kwa Kiingereza. "
+            "DO NOT write explanations in English. "
+            "NEVER write complete solutions for graded assignments. Base explanations on the textbook."
+        )
+    else:
+        system_instruction = (
+            "You are an offline coding tutor for CS students. Your goal is to teach, explain errors, and guide the student. "
+            "CRITICAL RULE: You must NEVER write complete solutions for graded assignments. Refuse direct requests to just solve the problem. "
+            "Use the provided textbook reference to ground your explanation."
+        )
 
     context_prompt = (
         f"Textbook Reference (Think Python): {retrieved_text}\n"
@@ -82,7 +90,8 @@ def chat_endpoint(request: ChatRequest):
                     {"role": "system", "content": system_instruction},
                     {"role": "user", "content": context_prompt}
                 ],
-                "temperature": 0.3,
+                "temperature": 0.35,          # Lowered back down for stability
+                "frequency_penalty": 0.2,     # Mild penalty to stop loops without causing word salad
                 "max_tokens": 384
             },
             timeout=120
