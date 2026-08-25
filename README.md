@@ -46,8 +46,9 @@ On a fresh Ubuntu 22.04 LTS environment, install the required system build tools
 sudo apt update && sudo apt install -y git cmake build-essential python3.11 python3.11-venv wget
 
 # Clone repository and enter project directory
+cd ~
 git clone https://github.com/cliffkoome/zephyr.git
-cd offline-coding-tutor
+cd zephyr
 
 # Create and activate Python virtual environment
 python3.11 -m venv ~/adtc-venv
@@ -76,7 +77,7 @@ cmake --build build --config Release -j$(nproc)
 Download the quantized Qwen2.5-Coder GGUF model weights (~2.4 GB) directly into the project directory:
 
 ```bash
-cd ~/offline-coding-tutor
+cd ~/zephyr
 chmod +x download_model.sh
 ./download_model.sh
 
@@ -87,7 +88,7 @@ chmod +x download_model.sh
 Build the local ChromaDB vector store from the provided educational material:
 
 ```bash
-cd ~/offline-coding-tutor
+cd ~/zephyr
 source ~/adtc-venv/bin/activate
 python rag_ingest.py
 
@@ -102,7 +103,7 @@ To run the interactive application, start the three components across separate t
 **Tab 1: Start `llama-server` Inference Engine**
 
 ```bash
-cd ~/offline-coding-tutor
+cd ~/zephyr
 ~/llama.cpp/build/bin/llama-server -m model/qwen2.5-coder-3b-instruct-q4_k_m.gguf --port 8080 -c 4096
 
 ```
@@ -110,7 +111,7 @@ cd ~/offline-coding-tutor
 **Tab 2: Start FastAPI Orchestration Backend**
 
 ```bash
-cd ~/offline-coding-tutor
+cd ~/zephyr
 source ~/adtc-venv/bin/activate
 uvicorn backend:app --port 8000
 
@@ -119,7 +120,7 @@ uvicorn backend:app --port 8000
 **Tab 3: Launch Streamlit Frontend**
 
 ```bash
-cd ~/offline-coding-tutor
+cd ~/zephyr
 source ~/adtc-venv/bin/activate
 streamlit run app.py
 
