@@ -46,7 +46,7 @@ On a fresh Ubuntu 22.04 LTS environment, install the required system build tools
 sudo apt update && sudo apt install -y git cmake build-essential python3.11 python3.11-venv wget
 
 # Clone repository and enter project directory
-git clone [https://github.com/](https://github.com/)<your-username>/offline-coding-tutor.git
+git clone https://github.com/cliffkoome/zephyr.git
 cd offline-coding-tutor
 
 # Create and activate Python virtual environment
@@ -64,7 +64,7 @@ Compile `llama.cpp` natively for CPU inference. This must be done in the home di
 
 ```bash
 cd ~
-git clone [https://github.com/ggerganov/llama.cpp.git](https://github.com/ggerganov/llama.cpp.git)
+git clone https://github.com/ggerganov/llama.cpp.git
 cd llama.cpp
 cmake -B build
 cmake --build build --config Release -j$(nproc)
@@ -134,7 +134,7 @@ Access the tutor interface in your browser at `http://localhost:8501`.
 To evaluate Zephyr using the official ADTC profiler harness:
 
 ```bash
-pip install "git+[https://github.com/Africa-Deep-Tech-Foundation/adtc-profiler.git](https://github.com/Africa-Deep-Tech-Foundation/adtc-profiler.git)"
+pip install https://github.com/Africa-Deep-Tech-Foundation/adtc-profiler.git
 
 adtc-profiler run \
   --submission . \
